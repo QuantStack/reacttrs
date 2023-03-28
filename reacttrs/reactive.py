@@ -1,3 +1,6 @@
+# this is a partial copy/paste from:
+# https://github.com/Textualize/textual/blob/373fc95fc1a5650fd864053e4153eb2d6b38f087/src/textual/reactive.py
+
 import asyncio
 from inspect import isawaitable
 from typing import Any, Awaitable, Callable, ClassVar, Generic, TypeVar
