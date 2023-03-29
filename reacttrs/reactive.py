@@ -1,6 +1,7 @@
 # this is a partial copy/paste from:
 # https://github.com/Textualize/textual/blob/373fc95fc1a5650fd864053e4153eb2d6b38f087/src/textual/reactive.py
 
+from __future__ import annotations
 import asyncio
 from inspect import isawaitable
 from typing import Any, Awaitable, Callable, ClassVar, Generic, TypeVar
@@ -10,6 +11,7 @@ from ._callback import count_parameters
 
 Reactable = Any
 ReactiveType = TypeVar("ReactiveType")
+background_tasks = set()
 
 
 class Reactive(Generic[ReactiveType]):
@@ -173,7 +175,9 @@ class Reactive(Generic[ReactiveType]):
                 watch_result = watch_function()
             if isawaitable(watch_result):
                 # Result is awaitable, so we need to await it within an async context
-                asyncio.create_task(await_watcher(watch_result))
+                task = asyncio.create_task(await_watcher(watch_result))
+                background_tasks.add(task)
+                task.add_done_callback(background_tasks.discard)
 
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
