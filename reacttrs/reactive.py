@@ -22,11 +22,13 @@ class Reactive(Generic[ReactiveType]):
         init: bool = False,
         always_update: bool = False,
         compute: bool = True,
+        on_set: Callable[[Reactable, str, ReactiveType], None] | None = None,
     ) -> None:
         self._default = default
         self._init = init
         self._always_update = always_update
         self._run_compute = compute
+        self._on_set = on_set
 
     def _initialize_reactive(self, obj: Reactable, name: str) -> None:
         """Initialized a reactive attribute on an object.
@@ -129,6 +131,9 @@ class Reactive(Generic[ReactiveType]):
             if self._run_compute:
                 self._compute(obj)
 
+        if callable(self._on_set):
+            self._on_set(obj, self.name, value)
+
     @classmethod
     def _check_watchers(cls, obj: Reactable, name: str, old_value: Any):
         """Check watchers, and call watch methods / computes
@@ -226,9 +231,11 @@ class reactive(Reactive[ReactiveType]):
         *,
         init: bool = True,
         always_update: bool = False,
+        on_set: Callable[[Reactable, str, ReactiveType], None] | None = None,
     ) -> None:
         super().__init__(
             default,
             init=init,
             always_update=always_update,
+            on_set=on_set,
         )
