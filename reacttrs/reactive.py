@@ -133,8 +133,9 @@ class Reactive(Generic[ReactiveType]):
             if self._run_compute:
                 self._compute(obj)
 
-        if callable(self._on_set):
-            self._on_set(obj, self.name, value)
+            # Call side effect
+            if callable(self._on_set):
+                self._on_set(obj, self.name, value)
 
     @classmethod
     def _check_watchers(cls, obj: Reactable, name: str, old_value: Any):
