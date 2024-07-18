@@ -1,35 +1,31 @@
 # reacttrs
 
-Reactive attributes extracted out from [Textual](https://textual.textualize.io/guide/reactivity).
+Reactive attributes, initially extracted out from [Textual](https://textual.textualize.io/guide/reactivity), now a fork of [Declare](https://github.com/willmcgugan/declare).
 
 ```py
-from reacttrs import reactive
+from reacttrs import Int, Str
 
 
 class Foo:
 
-    name = reactive("Paul")
-    age = reactive(33)
-    birth = reactive(1990)
+    name = Str("Paul")
+    age = Int(34)
+    birth = Int(1990)
 
-    def watch_name(self, old, new):
+    @name.watch
+    def _watch_name(self, old: str, new: str):
         print(f"{old=}, {new=}")
 
-    def validate_name(self, name):
-        if name == "John":
-            print("Hey John!")
-        return name
-
-    def compute_age(self) -> int:
-        age = 2023 - self.birth
-        print(f"{age=}")
-        return age
+    @age.validate
+    def _validate_age(self, value: int) -> int:
+        return 2024 - self.birth
 
 foo = Foo()
-foo.name = "John"
-foo.name = "Steve"
+foo.name = "John"  # old='Paul', new='John'
+foo.name = "Steve"  # old='John', new='Steve'
 
-foo.age
+print(foo.age)  # 34
 foo.birth = 1991
-foo.age
+foo.age = 34
+print(foo.age)  # 33
 ```
