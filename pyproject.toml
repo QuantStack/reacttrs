@@ -30,3 +30,7 @@ path = "reacttrs/__init__.py"
 include = [
     "/reacttrs",
 ]
+
+[tool.hatch.build.targets.wheel]
+ignore-vcs = true
+packages = ["reacttrs"]
